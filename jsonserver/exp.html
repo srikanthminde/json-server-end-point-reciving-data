@@ -1,0 +1,67 @@
+function handleSub(event) {
+    event.preventDefault(); // prevent the form from submitting by default
+
+    // Get the values from the form inputs
+    var fu = document.getElementById('fullNamee').value;
+    var im = document.getElementById('imagee').value;
+    var ce = document.getElementById('centuries').value;
+    var ha = document.getElementById('halfCenturies').value;
+    var ag = document.getElementById('age').value;
+    var ge = document.getElementById('gender').value;
+
+    // Create the object with the values
+    var ob = {
+        "fullName": fu,
+        "image": im,
+        "centuries": ce,
+        "halfCenturies": ha,
+        "age": ag,
+        "gender": ge
+    };
+
+    // Make the POST request
+    fetch("http://localhost:3000/players", {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(ob)
+    }).then((res) => {
+        return res.json(); // return the response as JSON
+    }).then((data) => {
+        console.log(data); // log the response
+        setPlayers([...players, data]); // update the players list with the new player
+    }).catch((err) => {
+        console.log("Error:", err);
+    });
+}
+
+
+
+
+
+function handleSub(event){
+    event.preventDefault();
+    // console.log(id);
+    var fu=document.getElementById('fullName').value;
+    var im=document.getElementById('image').value;
+    var ce=document.getElementById('centuries').value;
+    var ha=document.getElementById('halfCenturies').value;
+    var ag=document.getElementById('age').value;
+    var ge=document.getElementById('gender').value;
+     var ob={
+        "fullName":fu,
+        "image": im,
+        "centuries":ce,
+        "halfCenturies": ha,
+        "age": ag,
+        "gender": ge
+     }
+            fetch("http://localhost:3000/players/",{
+            method:'POST',headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(ob)
+        })
+            .then((res)=>{
+            console.log(res.json());
+        })
+    } 

@@ -1,0 +1,213 @@
+<html></html>
+<head>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        function Players() {
+            var [players, setPlayers] = React.useState([]);
+            var [formedit,setFormedit]=React.useState(false)
+            var [inputData, setinputData] = React.useState({
+                fullName: "",
+                image: "",
+                centuries: "",
+                halfCenturies: "",
+                age: "",
+                gender: ""
+            });
+            var [playerdata,setPlayerdata] = React.useState({});
+           var id;
+            React.useEffect(() => {
+                fetch('http://localhost:3000/players')
+                    .then((response) => response.json())
+                    .then((data) => {
+                        setPlayers(data);
+                        console.log(data.length);
+                    });
+            }, []);
+
+            function Delete(id) {
+                fetch(`http://localhost:3000/players/${id}`, {
+                    method: "delete"
+                }).then((res) => {
+                    res.json().then((data) => {
+                        console.log(data);
+                    });
+                });
+            }
+
+
+            React.useEffect(()=>{
+                console.log(playerdata)
+                if(document.getElementById('updfullname')){
+                    document.getElementById('updfullname').value = playerdata.fullName
+                    document.getElementById('updimage').value = playerdata.image
+                    document.getElementById('updcenturies').value = playerdata.centuries
+                    document.getElementById('updhalfCenturies').value = playerdata.halfCenturies
+                    document.getElementById('updage').value = playerdata.age
+                    document.getElementById('updgender').value = playerdata.gender
+                }
+            },[playerdata])
+
+            
+            function editData (player){
+                setFormedit(!formedit)
+                console.log("playeeeee",player)
+                setPlayerdata({
+                    fullName: player.fullName,
+                    image: player.image,
+                    centuries: player.centuries,
+                    halfCenturies: player.halfCenturies,
+                    age: player.age,
+                    gender: player.gender,
+                    id: player.id
+
+                })
+                id=player.id;
+                // console.log(id)
+
+            }
+
+
+            function handleSub(event){
+            event.preventDefault();
+             console.log(id);
+            var fu=document.getElementById('fullName').value;
+            var im=document.getElementById('image').value;
+            var ce=document.getElementById('centuries').value;
+            var ha=document.getElementById('halfCenturies').value;
+            var ag=document.getElementById('age').value;
+            var ge=document.getElementById('gender').value;
+             var ob={
+                "fullName":fu,
+                "image": im,
+                "centuries":ce,
+                "halfCenturies": ha,
+                "age": ag,
+                "gender": ge
+             }
+            fetch("http://localhost:3000/players/",{
+            method:'POST',
+            headers: {
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(ob)
+        }).then((res)=>{
+            return (res.json());
+        })
+    }
+
+                    function updateeee(e){
+                        e.preventDefault()
+                        var ff= document.getElementById("updfullname").value
+                        var imgg=  document.getElementById("updimage").value
+                        var centu=  document.getElementById("updcenturies").value
+                        var hfff=  document.getElementById("updhalfCenturies").value
+                        var agee=  document.getElementById("updage").value
+                        var genddd=  document.getElementById("updgender").value
+                        console.log("erfwefewrfewfwewefewfwefwefewfweweweewfewfe")
+                        var poop={
+                        "fullName":ff,
+                        "image":imgg ,
+                        "centuries":centu,
+                        "halfCenturies": hfff,
+                        "age":agee ,
+                        "gender": genddd
+                       }
+
+                    // console.log(playerdata)
+                    fetch(`http://localhost:3000/players/${playerdata.id}`,{
+                        method:"PUT",
+                        headers:{"Content-Type":"application/json"},
+                        body:JSON.stringify(poop)
+                        }).then((res)=>{
+                            res.json()})
+                }
+
+            return (
+                <div>
+                    { formedit &&
+                        <div className="d-flex justify-content-center flex-wrap">
+                        <form  >
+                            <div className="d-flex">
+                                <div>
+                                    <label className="fs-5" for="updfullname">Full Name</label> <br />
+                                    <label className="fs-5" for="image">Image</label><br />
+                                    <label className="fs-5" for="centuries">Centuries</label><br />
+                                    <label className="fs-5" for="halfCenturies">Half Centuries</label><br />
+                                    <label className="fs-5" for="age">Age</label><br />
+                                    <label className="fs-5" for="gender">Gender</label><br />
+                                </div>
+                                <div>
+                                    <input id="updfullname" name="fullName" type="text"  /><br/>
+                                    <input id="updimage" name="image" type="text" /><br/>
+                                    <input id="updcenturies" name="centuries" type="text"  /><br />
+                                    <input id="updhalfCenturies" name="halfCenturies" type="text"   /><br/>
+                                    <input id="updage" name="age" type="text"  /><br  />
+                                    <input id="updgender" name="gender" type="text" /><br/>
+                                    <button onClick={(e)=>{updateeee(e)}} type="submit">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                      </div>
+                    }
+                    {  !formedit &&
+                        <div className="d-flex justify-content-center flex-wrap">
+                        <form  onSubmit={handleSub}>
+                            <div className="d-flex">
+                                <div>
+                                    <label className="fs-5" for="fullName">Full Name</label> <br />
+                                    <label className="fs-5" for="image">Image</label><br />
+                                    <label className="fs-5" for="centuries">Centuries</label><br />
+                                    <label className="fs-5" for="halfCenturies">Half Centuries</label><br />
+                                    <label className="fs-5" for="age">Age</label><br />
+                                    <label className="fs-5" for="gender">Gender</label><br />
+                                </div>
+                                <div>
+                                    <input id="fullNamee" name="fullName" type="text"  /><br/>
+                                    <input id="imagee" name="image" type="text" /><br/>
+                                    <input id="centuries" name="centuries" type="text"  /><br />
+                                    <input id="halfCenturies" name="halfCenturies" type="text"   /><br/>
+                                    <input id="age" name="age" type="text"  /><br  />
+                                    <input id="gender" name="gender" type="text" /><br/>
+                                    <button type="submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    }
+                    <div className="container">
+                        <h1 className="text-center px-2 py-2">Indian Cricket Players</h1>
+                        <ul className="d-flex flex-wrap">
+                            {
+                                players.map((player)=>{
+                                return (
+                                    <div className="card w-25 px-2 py-2">
+                                        <div>
+                                            <h5 className="text-center">{player.fullName}</h5>
+                                            <img src={player.image} width="100px"className="card-img" />
+                                            <div className="text-center"><h5>Centuries:{player.centuries}</h5></div>
+                                            <div className="text-center"><h5>Half Centuries:{player.halfCenturies}</h5></div>
+                                            <div className="btn-group">
+                                                <button className="btn btn-danger" onClick={()=>{Delete(player.id)}}>Delete</button>
+                                                <button className="btn btn-success" onClick={()=>{editData(player)}}>Edit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<Players/>, document.getElementById("root"));
+    </script>
+</body>
+</html>
